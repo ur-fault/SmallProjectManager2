@@ -147,7 +147,7 @@
                                 <div class="text-left font-medium">@worker.Projects.Count</div>
                             </td>
                             <td class="p-2 whitespace-nowrap">
-                                <div class="text-left">@worker.FirstWorkDay</div>
+                                <div class="text-left">@worker.FirstWorkDay.ToString("d.M.yyyy")</div>
                             </td>
                             <td class="p-2 whitespace-nowrap">
                                 <button onclick="@(() => Delete(worker))" class="group mr-2 p-1.5 w-10 text-sm aspect-square font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-red-500 focus:z-10 focus:ring-4 focus:ring-gray-200 border-2 border-transparent hover:border-black">
