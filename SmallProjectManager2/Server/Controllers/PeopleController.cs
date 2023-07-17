@@ -28,8 +28,20 @@ public class PeopleController : ControllerBase
             ID = worker.ID,
             Firstname = worker.Firstname,
             Lastname = worker.Lastname,
-            Address = worker.Address,
-            Projects = worker.Projects,
+            Address = new AddressDto {
+                ID = worker.Address.ID,
+                Country = worker.Address.Country,
+                City = worker.Address.City,
+                Street = worker.Address.Street,
+                HouseNumber = worker.Address.HouseNumber,
+            },
+            Projects = worker.Projects.Select(proj => new ProjectDtoGet {
+                    ID = proj.ID,
+                    Name = proj.Name,
+                    Progress = proj.Progress,
+                    PersonID = proj.PersonID,
+                })
+                .ToList(),
             Company = worker.Company,
         });
         return Ok(dtos);
@@ -42,19 +54,29 @@ public class PeopleController : ControllerBase
             .Include(worker => worker.Projects)
             .FirstOrDefaultAsync();
 
-        if (worker is not null) {
-            var dto = new ExternalDtoGet {
-                ID = worker.ID,
-                Firstname = worker.Firstname,
-                Lastname = worker.Lastname,
-                Address = worker.Address,
-                Projects = worker.Projects,
-                Company = worker.Company,
-            };
-            return Ok(dto);
-        }
-        else
-            return NotFound();
+        if (worker is null) return NotFound();
+        var dto = new ExternalDtoGet {
+            ID = worker.ID,
+            Firstname = worker.Firstname,
+            Lastname = worker.Lastname,
+            Address = new AddressDto {
+                ID = worker.Address.ID,
+                Country = worker.Address.Country,
+                City = worker.Address.City,
+                Street = worker.Address.Street,
+                HouseNumber = worker.Address.HouseNumber,
+            },
+            Projects = worker.Projects.Select(proj => new ProjectDtoGet {
+                    ID = proj.ID,
+                    Name = proj.Name,
+                    Progress = proj.Progress,
+                    PersonID = proj.PersonID,
+                })
+                .ToList(),
+            Company = worker.Company,
+        };
+        return Ok(dto);
+
     }
 
     [HttpPost("external")]
@@ -81,9 +103,20 @@ public class PeopleController : ControllerBase
         return Created($"api/people/external/{worker.ID}", new ExternalDtoGet {
             ID = worker.ID,
             Firstname = worker.Firstname,
-            Lastname = worker.Lastname,
-            Address = worker.Address,
-            Projects = worker.Projects.ToList(),
+            Lastname = worker.Lastname, Address = new AddressDto {
+                ID = worker.Address.ID,
+                Country = worker.Address.Country,
+                City = worker.Address.City,
+                Street = worker.Address.Street,
+                HouseNumber = worker.Address.HouseNumber,
+            },
+            Projects = worker.Projects.Select(proj => new ProjectDtoGet {
+                    ID = proj.ID,
+                    Name = proj.Name,
+                    Progress = proj.Progress,
+                    PersonID = proj.PersonID,
+                })
+                .ToList(),
             Company = worker.Company,
         });
     }
@@ -113,8 +146,20 @@ public class PeopleController : ControllerBase
             ID = worker.ID,
             Firstname = worker.Firstname,
             Lastname = worker.Lastname,
-            Address = worker.Address,
-            Projects = worker.Projects,
+            Address = new AddressDto {
+                ID = worker.Address.ID,
+                Country = worker.Address.Country,
+                City = worker.Address.City,
+                Street = worker.Address.Street,
+                HouseNumber = worker.Address.HouseNumber,
+            },
+            Projects = worker.Projects.Select(proj => new ProjectDtoGet {
+                    ID = proj.ID,
+                    Name = proj.Name,
+                    Progress = proj.Progress,
+                    PersonID = proj.PersonID,
+                })
+                .ToList(),
             FirstWorkDay = worker.FirstWorkDay,
         });
         return Ok(dtos);
@@ -127,19 +172,29 @@ public class PeopleController : ControllerBase
             .Include(worker => worker.Projects)
             .FirstOrDefaultAsync();
 
-        if (worker is not null) {
-            var dto = new InternalDtoGet {
-                ID = worker.ID,
-                Firstname = worker.Firstname,
-                Lastname = worker.Lastname,
-                Address = worker.Address,
-                Projects = worker.Projects,
-                FirstWorkDay = worker.FirstWorkDay,
-            };
-            return Ok(dto);
-        }
-        else
-            return NotFound();
+        if (worker is null) return NotFound();
+        var dto = new InternalDtoGet {
+            ID = worker.ID,
+            Firstname = worker.Firstname,
+            Lastname = worker.Lastname,
+            Address = new AddressDto {
+                ID = worker.Address.ID,
+                Country = worker.Address.Country,
+                City = worker.Address.City,
+                Street = worker.Address.Street,
+                HouseNumber = worker.Address.HouseNumber,
+            },
+            Projects = worker.Projects.Select(proj => new ProjectDtoGet {
+                    ID = proj.ID,
+                    Name = proj.Name,
+                    Progress = proj.Progress,
+                    PersonID = proj.PersonID,
+                })
+                .ToList(),
+            FirstWorkDay = worker.FirstWorkDay,
+        };
+        return Ok(dto);
+
     }
 
     [HttpPost("internal")]
@@ -167,8 +222,20 @@ public class PeopleController : ControllerBase
             ID = worker.ID,
             Firstname = worker.Firstname,
             Lastname = worker.Lastname,
-            Address = worker.Address,
-            Projects = worker.Projects.ToList(),
+            Address = new AddressDto {
+                ID = worker.Address.ID,
+                Country = worker.Address.Country,
+                City = worker.Address.City,
+                Street = worker.Address.Street,
+                HouseNumber = worker.Address.HouseNumber,
+            },
+            Projects = worker.Projects.Select(proj => new ProjectDtoGet {
+                    ID = proj.ID,
+                    Name = proj.Name,
+                    Progress = proj.Progress,
+                    PersonID = proj.PersonID,
+                })
+                .ToList(),
             FirstWorkDay = worker.FirstWorkDay,
         });
     }

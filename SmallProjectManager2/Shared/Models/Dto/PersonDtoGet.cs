@@ -10,9 +10,9 @@ public class PersonDtoGet
 
     public string Lastname { get; set; }
 
-    public virtual Address Address { get; set; }
+    public AddressDto Address { get; set; }
 
-    public virtual ICollection<Project> Projects { get; set; }
+    public ICollection<ProjectDtoGet> Projects { get; set; }
 
     public override string ToString() => $"{Firstname} {Lastname}, {Address}, {Projects.Count} projects";
 }

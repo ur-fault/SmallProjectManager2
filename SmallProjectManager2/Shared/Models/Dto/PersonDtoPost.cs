@@ -16,5 +16,5 @@ public class PersonDtoPost
 
     [Required] public int AddressID { get; set; }
 
-    public virtual ICollection<int>? Projects { get; set; }
+    public ICollection<int>? Projects { get; set; }
 }

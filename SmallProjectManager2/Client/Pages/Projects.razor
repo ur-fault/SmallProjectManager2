@@ -1,4 +1,4 @@
-@page "/addressbook"
+@page "/projects"
 @using SmallProjectManager2.Shared.Models
 @using System.Runtime.InteropServices
 @inject HttpClient HttpClient
@@ -6,7 +6,7 @@
 <div>
     <div class="w-full bg-white rounded-sm mt-8">
         <header class="px-5 py-4 border-b border-gray-100 mb-4">
-            <h2 class="font-semibold text-gray-800">Address Book</h2>
+            <h2 class="font-semibold text-gray-800">Projects</h2>
         </header>
         @if (IsLoading) {
             <div class="mt-8 w-full border-2 border-yellow-400 p-4 bg-amber-200 rounded-2xl">
@@ -23,8 +23,8 @@
             Refresh
         </button>
         <div class="px-5">
-            <NavLink href="/addaddress" class="font-light text-sm hover:underline">
-                Add new address
+            <NavLink href="/addproject" class="font-light text-sm hover:underline">
+                Add new project
             </NavLink>
         </div>
         <div class="p-3">
@@ -36,16 +36,13 @@
                             <div class="font-semibold text-left">#ID</div>
                         </th>
                         <th class="p-2 whitespace-nowrap">
-                            <div class="font-semibold text-left">Country</div>
+                            <div class="font-semibold text-left">Name</div>
                         </th>
                         <th class="p-2 whitespace-nowrap">
-                            <div class="font-semibold text-left">City</div>
+                            <div class="font-semibold text-left">Progress</div>
                         </th>
                         <th class="p-2 whitespace-nowrap">
-                            <div class="font-semibold text-left">Street</div>
-                        </th>
-                        <th class="p-2 whitespace-nowrap">
-                            <div class="font-semibold text-left">House Number</div>
+                            <div class="font-semibold text-left">Owner</div>
                         </th>
                         <th class="p-2 whitespace-nowrap">
                             <div class="font-semibold text-left">Actions</div>
@@ -53,25 +50,22 @@
                     </tr>
                     </thead>
                     <tbody class="text-sm divide-y">
-                    @foreach (var addr in AddressBook) {
+                    @foreach (var project in ProjectList) {
                         <tr class="border-b hover:bg-gray-200 rounded-md even:bg-slate-100">
                             <td class="p-2 whitespace-nowrap">
-                                <div class="font-medium text-gray-800">#@addr.ID</div>
+                                <div class="font-medium text-gray-800">#@project.ID</div>
                             </td>
                             <td class="p-2 whitespace-nowrap">
-                                <div class="font-medium text-gray-800">@addr.Country</div>
+                                <div class="font-medium text-gray-800">@project.Name</div>
                             </td>
                             <td class="p-2 whitespace-nowrap">
-                                <div class="text-left">@addr.City</div>
+                                <div class="text-left">@project.Progress</div>
                             </td>
                             <td class="p-2 whitespace-nowrap">
-                                <div class="text-left font-medium">@addr.Street</div>
+                                <div class="text-left font-medium">@project.Person</div>
                             </td>
                             <td class="p-2 whitespace-nowrap">
-                                <div class="text-left font-medium">@addr.HouseNumber</div>
-                            </td>
-                            <td class="p-2 whitespace-nowrap">
-                                <button onclick="@(() => Delete(addr))" class="group mr-2 p-1.5 w-10 text-sm aspect-square font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-red-500 focus:z-10 focus:ring-4 focus:ring-gray-200 border-2 border-transparent hover:border-black">
+                                <button onclick="@(() => Delete(project))" class="group mr-2 p-1.5 w-10 text-sm aspect-square font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-red-500 focus:z-10 focus:ring-4 focus:ring-gray-200 border-2 border-transparent hover:border-black">
                                     <svg class="group-hover:stroke-white stroke-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
@@ -98,7 +92,7 @@
     private bool IsLoading { get; set; } = true;
     private bool IsError { get; set; } = false;
     private string? Error { get; set; } = null;
-    private List<AddressDto> AddressBook { get; set; } = new();
+    private List<ProjectDtoGet> ProjectList { get; set; } = new();
 
     protected override async Task OnInitializedAsync() {
         await GetAddresses();
@@ -107,7 +101,7 @@
     private async Task GetAddresses() {
         IsLoading = true;
         try {
-            AddressBook = await HttpClient.GetFromJsonAsync<List<AddressDto>>("/api/address") ?? AddressBook;
+            ProjectList = await HttpClient.GetFromJsonAsync<List<ProjectDtoGet>>("/api/projects") ?? ProjectList;
         }
         catch (Exception e) {
             IsError = true;
@@ -118,10 +112,10 @@
         }
     }
 
-    private async void Delete(AddressDto addressDtoDelete) {
-        if ((await HttpClient.DeleteAsync($"/api/address/{addressDtoDelete.ID}")).IsSuccessStatusCode) {
-            Console.WriteLine($"Removed {addressDtoDelete.ID}");
-            AddressBook.Remove(addressDtoDelete);
+    private async void Delete(ProjectDtoGet projectToDelete) {
+        if ((await HttpClient.DeleteAsync($"/api/address/{projectToDelete.ID}")).IsSuccessStatusCode) {
+            Console.WriteLine($"Removed {projectToDelete.ID}");
+            ProjectList.Remove(projectToDelete);
             StateHasChanged();
         }
     }

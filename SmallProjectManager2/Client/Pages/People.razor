@@ -1,5 +1,6 @@
 @page "/people"
 @using SmallProjectManager2.Shared.Models
+@using SmallProjectManager2.Shared.Models.Dto
 @inject HttpClient HttpClient
 
 <div>
@@ -176,8 +177,8 @@
     private bool IsLoading { get; set; } = true;
     private bool IsError { get; set; } = false;
     private string? Error { get; set; } = null;
-    public List<ExternalWorker> ExternalWorkers { get; set; } = new();
-    public List<InternalWorker> InternalWorkers { get; set; } = new();
+    public List<ExternalDtoGet> ExternalWorkers { get; set; } = new();
+    public List<InternalDtoGet> InternalWorkers { get; set; } = new();
 
 
     protected override async Task OnInitializedAsync() {
@@ -187,8 +188,8 @@
     private async Task GetPeople() {
         IsLoading = true;
         try {
-            ExternalWorkers = await HttpClient.GetFromJsonAsync<List<ExternalWorker>>("api/people/external") ?? ExternalWorkers;
-            InternalWorkers = await HttpClient.GetFromJsonAsync<List<InternalWorker>>("api/people/internal") ?? InternalWorkers;
+            ExternalWorkers = await HttpClient.GetFromJsonAsync<List<ExternalDtoGet>>("api/people/external") ?? ExternalWorkers;
+            InternalWorkers = await HttpClient.GetFromJsonAsync<List<InternalDtoGet>>("api/people/internal") ?? InternalWorkers;
         }
         catch (Exception e) {
             IsError = true;
@@ -199,17 +200,17 @@
         }
     }
 
-    private async void Delete(Person person) {
-        var isInternal = person is InternalWorker;
+    private async void Delete(PersonDtoGet person) {
+        var isInternal = person is InternalDtoGet;
 
         Console.WriteLine($"Removing person with ID {person.ID}");
         if (!(await HttpClient.DeleteAsync($"api/people/{(isInternal ? "internal" : "external")}/{person.ID}")).IsSuccessStatusCode)
             return;
 
         if (isInternal)
-            InternalWorkers.Remove((InternalWorker)person);
+            InternalWorkers.Remove((InternalDtoGet)person);
         else
-            ExternalWorkers.Remove((ExternalWorker)person);
+            ExternalWorkers.Remove((ExternalDtoGet)person);
 
         StateHasChanged();
     }

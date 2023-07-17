@@ -5,7 +5,7 @@
 
 <div>
     <h3 class="text-lg">Add new address</h3>
-    <EditForm Model="@_address" OnValidSubmit="@HandleValidSubmit" class="mt-8">
+    <EditForm Model="@_addressDtoPost" OnValidSubmit="@HandleValidSubmit" class="mt-8">
         <DataAnnotationsValidator/>
         <ValidationSummary/>
         <div>
@@ -18,7 +18,7 @@
                             Country
                         </label>
                         <InputText
-                            @bind-Value="@_address.Country"
+                            @bind-Value="@_addressDtoPost.Country"
                             name="country"
                             placeholder="Germany"
                             class="w-full rounded-md border bg-white py-3 px-6 text-base font-medium text-neutral-600 outline-none focus:border-blue-700 focus:shadow-md"/>
@@ -32,7 +32,7 @@
                             City
                         </label>
                         <InputText
-                            @bind-Value="@_address.City"
+                            @bind-Value="@_addressDtoPost.City"
                             name="city"
                             placeholder="Berlin"
                             class="w-full rounded-md border bg-white py-3 px-6 text-base font-medium text-neutral-600 outline-none focus:border-blue-700 focus:shadow-md"/>
@@ -48,7 +48,7 @@
                             Street
                         </label>
                         <InputText
-                            @bind-Value="@_address.Street"
+                            @bind-Value="@_addressDtoPost.Street"
                             name="street"
                             placeholder="Example Street"
                             class="w-full rounded-md border bg-white py-3 px-6 text-base font-medium text-neutral-600 outline-none focus:border-blue-700 focus:shadow-md"/>
@@ -62,7 +62,7 @@
                             House Number
                         </label>
                         <InputNumber
-                            @bind-Value="@_address.HouseNumber"
+                            @bind-Value="@_addressDtoPost.HouseNumber"
                             name="number"
                             placeholder="Berlin"
                             min="1"
@@ -83,17 +83,17 @@
 </div>
 
 @code {
-    private Address _address = new() { HouseNumber = 1 };
+    private AddressDto _addressDtoPost = new() { HouseNumber = 1 };
 
     [CascadingParameter]
     public IModalService ModalService { get; set; } = default!;
 
     private async Task HandleValidSubmit() {
-        var response = await HttpClient.PostAsJsonAsync("/api/address", _address);
+        var response = await HttpClient.PostAsJsonAsync("/api/address", _addressDtoPost);
         if (response.IsSuccessStatusCode) {
             ModalService.Show<Modal>("Address saved successfully.", new ModalParameters()
                 .Add(nameof(Modal.Title), "Successfully saved")
-                .Add(nameof(Modal.Message), $"Address {_address} successfully saved to the database."));
+                .Add(nameof(Modal.Message), $"Address {_addressDtoPost} successfully saved to the database."));
         }
     }
 

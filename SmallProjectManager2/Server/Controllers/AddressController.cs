@@ -15,33 +15,31 @@ public class AddressController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<ICollection<Address>> GetAddressBook() {
+    public ActionResult<ICollection<Address>> GetAll() {
         return Ok(_db.Addresses);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Address>> GetAddress(int id) {
+    public async Task<ActionResult<Address>> Get(int id) {
         var addr = await _db.Addresses.FindAsync(id);
         if (addr is not null)
             return Ok(addr);
-        else
-            return NotFound();
+        return NotFound();
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddAddress(Address address) {
+    public async Task<ActionResult> Add(Address address) {
         if (TryValidateModel(address)) {
             _db.Addresses.Add(address);
             await _db.SaveChangesAsync();
             return Ok();
         }
-        else {
-            return ValidationProblem();
-        }
+
+        return ValidationProblem();
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<ActionResult> DeleteAddress(int id) {
+    public async Task<ActionResult> Delete(int id) {
         var addr = await _db.Addresses.FindAsync(id);
         if (addr is null) return NotFound();
 

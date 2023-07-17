@@ -1,6 +1,7 @@
 @page "/addinternal"
 @using SmallProjectManager2.Shared.Models
 @using SmallProjectManager2.Client.Shared.Popups
+@using SmallProjectManager2.Shared.Models.Dto
 @inject HttpClient HttpClient
 
 <div>
@@ -87,22 +88,21 @@
 </div>
 
 @code {
-    private InternalWorker _worker = new() { Projects = new List<Project>() };
-    private List<Address> Addresses = new();
+    private InternalDtoPost _worker = new() { Projects = new List<int>() };
+    private List<AddressDto> Addresses = new();
 
     [CascadingParameter]
     public IModalService ModalService { get; set; } = default!;
 
     protected override async Task OnInitializedAsync() {
         try {
-            Addresses = await HttpClient.GetFromJsonAsync<List<Address>>("api/address") ?? Addresses;
+            Addresses = await HttpClient.GetFromJsonAsync<List<AddressDto>>("api/address") ?? Addresses;
             StateHasChanged();
         }
         catch (Exception e) { }
     }
 
     private async Task HandleValidSubmit() {
-        _worker.Address = await HttpClient.GetFromJsonAsync<Address>("api/address/" + _worker.AddressID) ?? throw new Exception("Address not found.");
         var response = await HttpClient.PostAsJsonAsync("/api/people/internal", _worker);
         if (response.IsSuccessStatusCode) {
             ModalService.Show<Modal>("Address saved successfully.", new ModalParameters()
