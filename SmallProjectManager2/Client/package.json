@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "dev": "npx tailwindcss -c tailwind.config.js -i ./tailwind.input.css -o ./wwwroot/css/tailwind-out.css --watch",
+    "build": "npx tailwindcss -c tailwind.config.js -i ./tailwind.input.css -o ./wwwroot/css/tailwind-out.css --minify"
+  }
+}

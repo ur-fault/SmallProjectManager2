@@ -1,0 +1,112 @@
+@page "/addexternal"
+@using SmallProjectManager2.Shared.Models
+@using SmallProjectManager2.Client.Shared.Popups
+@inject HttpClient HttpClient
+
+<div>
+    <h3 class="text-lg">Add new address</h3>
+    <EditForm Model="@_worker" OnValidSubmit="@HandleValidSubmit" class="mt-8">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <div>
+            <div class="-mx-3 flex flex-wrap">
+                <div class="w-full px-3 sm:w-1/2">
+                    <div class="mb-5">
+                        <label
+                            for="fname"
+                            class="mb-3 block text-base font-medium">
+                            First name
+                        </label>
+                        <InputText
+                            @bind-Value="@_worker.Firstname"
+                            name="fname"
+                            placeholder="John"
+                            class="w-full rounded-md border bg-white py-3 px-6 text-base font-medium text-neutral-600 outline-none focus:border-blue-700 focus:shadow-md"/>
+                    </div>
+                </div>
+                <div class="w-full px-3 sm:w-1/2">
+                    <div class="mb-5">
+                        <label
+                            for="lname"
+                            class="mb-3 block text-base font-medium">
+                            Last name
+                        </label>
+                        <InputText
+                            @bind-Value="@_worker.Lastname"
+                            name="lname"
+                            placeholder="Doe"
+                            class="w-full rounded-md border bg-white py-3 px-6 text-base font-medium text-neutral-600 outline-none focus:border-blue-700 focus:shadow-md"/>
+                    </div>
+                </div>
+            </div>
+            <div class="-mx-3 flex flex-wrap">
+                <div class="w-full px-3 sm:w-1/2">
+                    <div class="mb-5">
+                        <label
+                            for="company"
+                            class="mb-3 block text-base font-medium">
+                            Company
+                        </label>
+                        <InputText
+                            @bind-Value="@_worker.Company"
+                            name="company"
+                            placeholder="Example Inc."
+                            class="w-full rounded-md border bg-white py-3 px-6 text-base font-medium text-neutral-600 outline-none focus:border-blue-700 focus:shadow-md"/>
+                    </div>
+                </div>
+                <div class="w-full px-3 sm:w-1/2">
+                    <div class="mb-5">
+                        <label
+                            for="addr"
+                            class="mb-3 block text-base font-medium">
+                            Address
+                        </label>
+                        <InputSelect
+                            @bind-Value="@_worker.AddressID"
+                            name="addr"
+                            placeholder="Berlin"
+                            class="w-full rounded-md border bg-white py-3 px-6 text-base font-medium text-neutral-600 outline-none focus:border-blue-700 focus:shadow-md">
+                            @foreach (var address in Addresses) {
+                                <option value="@address.ID">@address.ToString()</option>
+                            }
+                        </InputSelect>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <button
+                    class="hover:shadow-form rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    private ExternalWorker _worker = new() { Projects = new List<Project>() };
+    private List<Address> Addresses = new();
+
+    [CascadingParameter]
+    public IModalService ModalService { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync() {
+        try {
+            Addresses = await HttpClient.GetFromJsonAsync<List<Address>>("api/address") ?? Addresses;
+            StateHasChanged();
+        }
+        catch (Exception e) { }
+    }
+
+    private async Task HandleValidSubmit() {
+        _worker.Address = await HttpClient.GetFromJsonAsync<Address>("api/address/" + _worker.AddressID) ?? throw new Exception("Address not found.");
+        var response = await HttpClient.PostAsJsonAsync("/api/people/external", _worker);
+        if (response.IsSuccessStatusCode) {
+            ModalService.Show<Modal>("Address saved successfully.", new ModalParameters()
+                .Add(nameof(Modal.Title), "Successfully saved")
+                .Add(nameof(Modal.Message), $"External worker {_worker} successfully saved to the database."));
+        }
+    }
+
+}

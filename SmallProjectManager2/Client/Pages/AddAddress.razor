@@ -1,0 +1,100 @@
+@page "/addaddress"
+@using SmallProjectManager2.Shared.Models
+@using SmallProjectManager2.Client.Shared.Popups
+@inject HttpClient HttpClient
+
+<div>
+    <h3 class="text-lg">Add new address</h3>
+    <EditForm Model="@_address" OnValidSubmit="@HandleValidSubmit" class="mt-8">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <div>
+            <div class="-mx-3 flex flex-wrap">
+                <div class="w-full px-3 sm:w-1/2">
+                    <div class="mb-5">
+                        <label
+                            for="country"
+                            class="mb-3 block text-base font-medium">
+                            Country
+                        </label>
+                        <InputText
+                            @bind-Value="@_address.Country"
+                            name="country"
+                            placeholder="Germany"
+                            class="w-full rounded-md border bg-white py-3 px-6 text-base font-medium text-neutral-600 outline-none focus:border-blue-700 focus:shadow-md"/>
+                    </div>
+                </div>
+                <div class="w-full px-3 sm:w-1/2">
+                    <div class="mb-5">
+                        <label
+                            for="city"
+                            class="mb-3 block text-base font-medium">
+                            City
+                        </label>
+                        <InputText
+                            @bind-Value="@_address.City"
+                            name="city"
+                            placeholder="Berlin"
+                            class="w-full rounded-md border bg-white py-3 px-6 text-base font-medium text-neutral-600 outline-none focus:border-blue-700 focus:shadow-md"/>
+                    </div>
+                </div>
+            </div>
+            <div class="-mx-3 flex flex-wrap">
+                <div class="w-full px-3 sm:w-1/2">
+                    <div class="mb-5">
+                        <label
+                            for="street"
+                            class="mb-3 block text-base font-medium">
+                            Street
+                        </label>
+                        <InputText
+                            @bind-Value="@_address.Street"
+                            name="street"
+                            placeholder="Example Street"
+                            class="w-full rounded-md border bg-white py-3 px-6 text-base font-medium text-neutral-600 outline-none focus:border-blue-700 focus:shadow-md"/>
+                    </div>
+                </div>
+                <div class="w-full px-3 sm:w-1/2">
+                    <div class="mb-5">
+                        <label
+                            for="number"
+                            class="mb-3 block text-base font-medium">
+                            House Number
+                        </label>
+                        <InputNumber
+                            @bind-Value="@_address.HouseNumber"
+                            name="number"
+                            placeholder="Berlin"
+                            min="1"
+                            max="@int.MaxValue"
+                            class="w-full rounded-md border bg-white py-3 px-6 text-base font-medium text-neutral-600 outline-none focus:border-blue-700 focus:shadow-md"/>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <button
+                    class="hover:shadow-form rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    private Address _address = new() { HouseNumber = 1 };
+
+    [CascadingParameter]
+    public IModalService ModalService { get; set; } = default!;
+
+    private async Task HandleValidSubmit() {
+        var response = await HttpClient.PostAsJsonAsync("/api/address", _address);
+        if (response.IsSuccessStatusCode) {
+            ModalService.Show<Modal>("Address saved successfully.", new ModalParameters()
+                .Add(nameof(Modal.Title), "Successfully saved")
+                .Add(nameof(Modal.Message), $"Address {_address} successfully saved to the database."));
+        }
+    }
+
+}
