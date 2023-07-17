@@ -7,7 +7,7 @@ public class ProjectsDbContext : DbContext
 {
     public DbSet<Project> Projects { get; set; }
     public DbSet<ExternalWorker> ExternalWorkers { get; set; }
-    public DbSet<InternalWorker> InernalWorkers { get; set; }
+    public DbSet<InternalWorker> InternalWorkers { get; set; }
     public DbSet<Address> Addresses { get; set; }
 
     private string _dbPath;

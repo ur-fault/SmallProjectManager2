@@ -1,6 +1,5 @@
 @page "/people"
 @using SmallProjectManager2.Shared.Models
-@using System.Runtime.InteropServices
 @inject HttpClient HttpClient
 
 <div>
@@ -8,14 +7,6 @@
         <header class="px-5 py-4 border-b border-gray-100 mb-4">
             <h2 class="font-semibold text-gray-800">Worker List</h2>
         </header>
-        <div class="px-5">
-            <NavLink href="/addexternal" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">
-                Add new worker
-            </NavLink>
-            <button onclick="@GetPeople" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">
-                Refresh
-            </button>
-        </div>
         @if (IsLoading) {
             <div class="mt-8 w-full border-2 border-yellow-400 p-4 bg-amber-200 rounded-2xl">
                 <span>Loading</span>
@@ -26,28 +17,39 @@
                 <span>Error, please reload</span>
             </div>
         }
-        <div class="p-3">
+        <button onclick="@GetPeople" class="py-2.5 px-5 m-4 mt-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:border-blue-700 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">
+            Refresh
+        </button>
+        <div class="px-5">
+            <NavLink href="/addexternal" class="font-light text-sm hover:underline">
+                Add new external worker
+            </NavLink>
+        </div>
+        <div class="p-3 pt-0">
             <div class="overflow-x-auto">
                 <table class="table-auto w-full">
                     <thead class="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
                     <tr>
                         <th class="p-2 whitespace-nowrap">
-                            <div class="font-semibold text-left">#ID</div>
+                            <div class="text-left">#ID</div>
                         </th>
                         <th class="p-2 whitespace-nowrap">
-                            <div class="font-semibold text-left">First name</div>
+                            <div class="text-left">First name</div>
                         </th>
                         <th class="p-2 whitespace-nowrap">
-                            <div class="font-semibold text-left">Last name</div>
+                            <div class="text-left">Last name</div>
                         </th>
                         <th class="p-2 whitespace-nowrap">
-                            <div class="font-semibold text-left">Projects</div>
+                            <div class="text-left">Address</div>
                         </th>
                         <th class="p-2 whitespace-nowrap">
-                            <div class="font-semibold text-left">Company</div>
+                            <div class="text-left">Projects</div>
                         </th>
                         <th class="p-2 whitespace-nowrap">
-                            <div class="font-semibold text-left">Actions</div>
+                            <div class="text-left">Company</div>
+                        </th>
+                        <th class="p-2 whitespace-nowrap">
+                            <div class="text-left">Actions</div>
                         </th>
                     </tr>
                     </thead>
@@ -64,6 +66,9 @@
                                 <div class="text-left">@worker.Lastname</div>
                             </td>
                             <td class="p-2 whitespace-nowrap">
+                                <div class="text-left">@worker.Address.ToString()</div>
+                            </td>
+                            <td class="p-2 whitespace-nowrap">
                                 <div class="text-left font-medium">@worker.Projects.Count</div>
                             </td>
                             <td class="p-2 whitespace-nowrap">
@@ -76,7 +81,82 @@
                                     </svg>
                                 </button>
                                 <button class="group mr-2 p-1.5 w-10 text-sm aspect-square font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-red-500 focus:z-10 focus:ring-4 focus:ring-gray-200 border-2 border-transparent hover:border-black">
-                                    <NavLink href="/editaddress">
+                                    <NavLink href="/editexternal">
+                                        <svg class="group-hover:stroke-white stroke-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
+                                        </svg>
+                                    </NavLink>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="px-5">
+            <NavLink href="/addinternal" class="font-light text-sm hover:underline">
+                Add new internal worker
+            </NavLink>
+        </div>
+        <div class="p-3">
+            <div class="overflow-x-auto">
+                <table class="table-auto w-full">
+                    <thead class="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
+                    <tr>
+                        <th class="p-2 whitespace-nowrap">
+                            <div class="font-semibold text-left">#ID</div>
+                        </th>
+                        <th class="p-2 whitespace-nowrap">
+                            <div class="font-semibold text-left">First name</div>
+                        </th>
+                        <th class="p-2 whitespace-nowrap">
+                            <div class="font-semibold text-left">Last name</div>
+                        </th>
+                        <th class="p-2 whitespace-nowrap">
+                            <div class="font-semibold text-left">Address</div>
+                        </th>
+                        <th class="p-2 whitespace-nowrap">
+                            <div class="font-semibold text-left">Projects</div>
+                        </th>
+                        <th class="p-2 whitespace-nowrap">
+                            <div class="font-semibold text-left">First day of work</div>
+                        </th>
+                        <th class="p-2 whitespace-nowrap">
+                            <div class="font-semibold text-left">Actions</div>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody class="text-sm divide-y">
+                    @foreach (var worker in InternalWorkers) {
+                        <tr class="border-b hover:bg-gray-200 rounded-md even:bg-slate-100">
+                            <td class="p-2 whitespace-nowrap">
+                                <div class="font-medium text-gray-800">#@worker.ID</div>
+                            </td>
+                            <td class="p-2 whitespace-nowrap">
+                                <div class="font-medium text-gray-800">@worker.Firstname</div>
+                            </td>
+                            <td class="p-2 whitespace-nowrap">
+                                <div class="text-left">@worker.Lastname</div>
+                            </td>
+                            <td class="p-2 whitespace-nowrap">
+                                <div class="text-left">@worker.Address.ToString()</div>
+                            </td>
+                            <td class="p-2 whitespace-nowrap">
+                                <div class="text-left font-medium">@worker.Projects.Count</div>
+                            </td>
+                            <td class="p-2 whitespace-nowrap">
+                                <div class="text-left">@worker.FirstWorkDay</div>
+                            </td>
+                            <td class="p-2 whitespace-nowrap">
+                                <button onclick="@(() => Delete(worker))" class="group mr-2 p-1.5 w-10 text-sm aspect-square font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-red-500 focus:z-10 focus:ring-4 focus:ring-gray-200 border-2 border-transparent hover:border-black">
+                                    <svg class="group-hover:stroke-white stroke-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </button>
+                                <button class="group mr-2 p-1.5 w-10 text-sm aspect-square font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-red-500 focus:z-10 focus:ring-4 focus:ring-gray-200 border-2 border-transparent hover:border-black">
+                                    <NavLink href="/editinternal">
                                         <svg class="group-hover:stroke-white stroke-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
                                         </svg>
@@ -108,7 +188,7 @@
         IsLoading = true;
         try {
             ExternalWorkers = await HttpClient.GetFromJsonAsync<List<ExternalWorker>>("api/people/external") ?? ExternalWorkers;
-    // InternalWorker = await HttpClient.GetFromJsonAsync<List<InternalWorker>>("api/internal") ?? InternalWorker;
+            InternalWorkers = await HttpClient.GetFromJsonAsync<List<InternalWorker>>("api/people/internal") ?? InternalWorkers;
         }
         catch (Exception e) {
             IsError = true;
@@ -133,4 +213,5 @@
 
         StateHasChanged();
     }
+
 }
