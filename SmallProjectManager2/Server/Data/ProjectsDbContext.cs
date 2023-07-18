@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SmallProjectManager2.Server.Data.Models;
 using SmallProjectManager2.Shared.Models;
 
 namespace SmallProjectManager.Data;

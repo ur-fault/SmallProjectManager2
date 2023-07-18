@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
+using SmallProjectManager2.Shared.Models;
+using SmallProjectManager2.Shared.Models.Dto;
 
-namespace SmallProjectManager2.Shared.Models;
+namespace SmallProjectManager2.Server.Data.Models;
 
 public abstract class Person
 {
@@ -24,5 +25,14 @@ public abstract class Person
 
     public virtual ICollection<Project> Projects { get; set; }
 
-    public override string ToString() => $"{Firstname} {Lastname}, {AddressID}: {Address}, {Projects.Count} projects";
+    public override string ToString() =>
+        $"{ID}: {Firstname} {Lastname}, {AddressID}: {Address}, {Projects.Count} projects";
+
+    public PersonDtoGet ToDtoGet() => new() {
+        ID = ID,
+        Firstname = Firstname,
+        Lastname = Lastname,
+        Address = Address.ToDto(),
+        Projects = Projects.Select(p => p.ToDtoGet(true)).ToList(),
+    };
 }

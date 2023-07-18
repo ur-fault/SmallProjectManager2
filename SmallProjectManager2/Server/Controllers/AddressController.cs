@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SmallProjectManager.Data;
+using SmallProjectManager2.Server.Data.Models;
 using SmallProjectManager2.Shared.Models;
 
 namespace SmallProjectManager2.Server.Controllers;

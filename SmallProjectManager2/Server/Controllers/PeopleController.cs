@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmallProjectManager.Data;
+using SmallProjectManager2.Server.Data.Models;
 using SmallProjectManager2.Shared.Models;
 using SmallProjectManager2.Shared.Models.Dto;
 
@@ -24,26 +25,7 @@ public class PeopleController : ControllerBase
             .Include(worker => worker.Address)
             .Include(worker => worker.Projects)
             .ToListAsync();
-        var dtos = workers.Select(worker => new ExternalDtoGet {
-            ID = worker.ID,
-            Firstname = worker.Firstname,
-            Lastname = worker.Lastname,
-            Address = new AddressDto {
-                ID = worker.Address.ID,
-                Country = worker.Address.Country,
-                City = worker.Address.City,
-                Street = worker.Address.Street,
-                HouseNumber = worker.Address.HouseNumber,
-            },
-            Projects = worker.Projects.Select(proj => new ProjectDtoGet {
-                    ID = proj.ID,
-                    Name = proj.Name,
-                    Progress = proj.Progress,
-                    PersonID = proj.PersonID,
-                })
-                .ToList(),
-            Company = worker.Company,
-        });
+        var dtos = workers.Select(worker => worker.ToDtoGet());
         return Ok(dtos);
     }
 
@@ -55,28 +37,8 @@ public class PeopleController : ControllerBase
             .FirstOrDefaultAsync();
 
         if (worker is null) return NotFound();
-        var dto = new ExternalDtoGet {
-            ID = worker.ID,
-            Firstname = worker.Firstname,
-            Lastname = worker.Lastname,
-            Address = new AddressDto {
-                ID = worker.Address.ID,
-                Country = worker.Address.Country,
-                City = worker.Address.City,
-                Street = worker.Address.Street,
-                HouseNumber = worker.Address.HouseNumber,
-            },
-            Projects = worker.Projects.Select(proj => new ProjectDtoGet {
-                    ID = proj.ID,
-                    Name = proj.Name,
-                    Progress = proj.Progress,
-                    PersonID = proj.PersonID,
-                })
-                .ToList(),
-            Company = worker.Company,
-        };
+        var dto = worker.ToDtoGet();
         return Ok(dto);
-
     }
 
     [HttpPost("external")]
@@ -100,25 +62,7 @@ public class PeopleController : ControllerBase
             return BadRequest();
         }
 
-        return Created($"api/people/external/{worker.ID}", new ExternalDtoGet {
-            ID = worker.ID,
-            Firstname = worker.Firstname,
-            Lastname = worker.Lastname, Address = new AddressDto {
-                ID = worker.Address.ID,
-                Country = worker.Address.Country,
-                City = worker.Address.City,
-                Street = worker.Address.Street,
-                HouseNumber = worker.Address.HouseNumber,
-            },
-            Projects = worker.Projects.Select(proj => new ProjectDtoGet {
-                    ID = proj.ID,
-                    Name = proj.Name,
-                    Progress = proj.Progress,
-                    PersonID = proj.PersonID,
-                })
-                .ToList(),
-            Company = worker.Company,
-        });
+        return Created($"api/people/external/{worker.ID}", worker.ToDtoGet());
     }
 
     [HttpDelete("external/{id:int}")]
@@ -142,26 +86,7 @@ public class PeopleController : ControllerBase
             .Include(worker => worker.Address)
             .Include(worker => worker.Projects)
             .ToListAsync();
-        var dtos = workers.Select(worker => new InternalDtoGet {
-            ID = worker.ID,
-            Firstname = worker.Firstname,
-            Lastname = worker.Lastname,
-            Address = new AddressDto {
-                ID = worker.Address.ID,
-                Country = worker.Address.Country,
-                City = worker.Address.City,
-                Street = worker.Address.Street,
-                HouseNumber = worker.Address.HouseNumber,
-            },
-            Projects = worker.Projects.Select(proj => new ProjectDtoGet {
-                    ID = proj.ID,
-                    Name = proj.Name,
-                    Progress = proj.Progress,
-                    PersonID = proj.PersonID,
-                })
-                .ToList(),
-            FirstWorkDay = worker.FirstWorkDay,
-        });
+        var dtos = workers.Select(worker => worker.ToDtoGet());
         return Ok(dtos);
     }
 
@@ -173,28 +98,8 @@ public class PeopleController : ControllerBase
             .FirstOrDefaultAsync();
 
         if (worker is null) return NotFound();
-        var dto = new InternalDtoGet {
-            ID = worker.ID,
-            Firstname = worker.Firstname,
-            Lastname = worker.Lastname,
-            Address = new AddressDto {
-                ID = worker.Address.ID,
-                Country = worker.Address.Country,
-                City = worker.Address.City,
-                Street = worker.Address.Street,
-                HouseNumber = worker.Address.HouseNumber,
-            },
-            Projects = worker.Projects.Select(proj => new ProjectDtoGet {
-                    ID = proj.ID,
-                    Name = proj.Name,
-                    Progress = proj.Progress,
-                    PersonID = proj.PersonID,
-                })
-                .ToList(),
-            FirstWorkDay = worker.FirstWorkDay,
-        };
+        var dto = worker.ToDtoGet();
         return Ok(dto);
-
     }
 
     [HttpPost("internal")]
@@ -217,27 +122,11 @@ public class PeopleController : ControllerBase
         catch (DbUpdateException e) {
             return BadRequest();
         }
+        
+        // shouldn't be null, since there was no DbUpdateException
+        worker.Address = (await _db.Addresses.FindAsync(worker.AddressID))!;
 
-        return Created($"api/people/external/{worker.ID}", new InternalDtoGet {
-            ID = worker.ID,
-            Firstname = worker.Firstname,
-            Lastname = worker.Lastname,
-            Address = new AddressDto {
-                ID = worker.Address.ID,
-                Country = worker.Address.Country,
-                City = worker.Address.City,
-                Street = worker.Address.Street,
-                HouseNumber = worker.Address.HouseNumber,
-            },
-            Projects = worker.Projects.Select(proj => new ProjectDtoGet {
-                    ID = proj.ID,
-                    Name = proj.Name,
-                    Progress = proj.Progress,
-                    PersonID = proj.PersonID,
-                })
-                .ToList(),
-            FirstWorkDay = worker.FirstWorkDay,
-        });
+        return Created($"api/people/external/{worker.ID}", worker.ToDtoGet());
     }
 
     [HttpDelete("internal/{id:int}")]
