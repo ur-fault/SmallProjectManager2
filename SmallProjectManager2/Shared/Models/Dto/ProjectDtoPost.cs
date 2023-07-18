@@ -9,12 +9,10 @@ public class ProjectDtoPost
     public int ID { get; set; }
 
     [Required]
-    [StringLength(2, MinimumLength = 50)]
+    [StringLength(50, MinimumLength = 2)]
     public string Name { get; set; } = default!;
 
     [Range(0, 1)] public float Progress { get; set; }
 
     [Required] public int PersonID { get; set; }
-
-    [Required] public PersonDtoPost Person { get; set; }
 }

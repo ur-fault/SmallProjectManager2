@@ -26,13 +26,13 @@ public abstract class Person
     public virtual ICollection<Project> Projects { get; set; }
 
     public override string ToString() =>
-        $"{ID}: {Firstname} {Lastname}, {AddressID}: {Address}, {Projects.Count} projects";
+        $"{ID}: {Firstname} {Lastname}, {AddressID}: {Address}, {Projects?.Count.ToString() ?? "?"} projects";
 
     public PersonDtoGet ToDtoGet() => new() {
         ID = ID,
         Firstname = Firstname,
         Lastname = Lastname,
-        Address = Address.ToDto(),
-        Projects = Projects.Select(p => p.ToDtoGet(true)).ToList(),
+        Address = Address?.ToDto(),
+        Projects = Projects?.Select(p => p.ToDtoGet(true)).ToList(),
     };
 }

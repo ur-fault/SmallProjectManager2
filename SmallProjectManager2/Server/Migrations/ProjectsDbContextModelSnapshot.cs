@@ -22,7 +22,7 @@ namespace SmallProjectManager2.Server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SmallProjectManager2.Shared.Models.Address", b =>
+            modelBuilder.Entity("SmallProjectManager2.Server.Data.Models.Address", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -53,7 +53,7 @@ namespace SmallProjectManager2.Server.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("SmallProjectManager2.Shared.Models.Person", b =>
+            modelBuilder.Entity("SmallProjectManager2.Server.Data.Models.Person", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -89,7 +89,7 @@ namespace SmallProjectManager2.Server.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("SmallProjectManager2.Shared.Models.Project", b =>
+            modelBuilder.Entity("SmallProjectManager2.Server.Data.Models.Project", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -99,8 +99,8 @@ namespace SmallProjectManager2.Server.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("PersonID")
                         .HasColumnType("int");
@@ -115,9 +115,9 @@ namespace SmallProjectManager2.Server.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("SmallProjectManager2.Shared.Models.ExternalWorker", b =>
+            modelBuilder.Entity("SmallProjectManager2.Server.Data.Models.ExternalWorker", b =>
                 {
-                    b.HasBaseType("SmallProjectManager2.Shared.Models.Person");
+                    b.HasBaseType("SmallProjectManager2.Server.Data.Models.Person");
 
                     b.Property<string>("Company")
                         .HasMaxLength(50)
@@ -126,9 +126,9 @@ namespace SmallProjectManager2.Server.Migrations
                     b.HasDiscriminator().HasValue("ExternalWorker");
                 });
 
-            modelBuilder.Entity("SmallProjectManager2.Shared.Models.InternalWorker", b =>
+            modelBuilder.Entity("SmallProjectManager2.Server.Data.Models.InternalWorker", b =>
                 {
-                    b.HasBaseType("SmallProjectManager2.Shared.Models.Person");
+                    b.HasBaseType("SmallProjectManager2.Server.Data.Models.Person");
 
                     b.Property<DateTime>("FirstWorkDay")
                         .HasColumnType("datetime2");
@@ -136,9 +136,9 @@ namespace SmallProjectManager2.Server.Migrations
                     b.HasDiscriminator().HasValue("InternalWorker");
                 });
 
-            modelBuilder.Entity("SmallProjectManager2.Shared.Models.Person", b =>
+            modelBuilder.Entity("SmallProjectManager2.Server.Data.Models.Person", b =>
                 {
-                    b.HasOne("SmallProjectManager2.Shared.Models.Address", "Address")
+                    b.HasOne("SmallProjectManager2.Server.Data.Models.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -147,9 +147,9 @@ namespace SmallProjectManager2.Server.Migrations
                     b.Navigation("Address");
                 });
 
-            modelBuilder.Entity("SmallProjectManager2.Shared.Models.Project", b =>
+            modelBuilder.Entity("SmallProjectManager2.Server.Data.Models.Project", b =>
                 {
-                    b.HasOne("SmallProjectManager2.Shared.Models.Person", "Person")
+                    b.HasOne("SmallProjectManager2.Server.Data.Models.Person", "Person")
                         .WithMany("Projects")
                         .HasForeignKey("PersonID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -158,7 +158,7 @@ namespace SmallProjectManager2.Server.Migrations
                     b.Navigation("Person");
                 });
 
-            modelBuilder.Entity("SmallProjectManager2.Shared.Models.Person", b =>
+            modelBuilder.Entity("SmallProjectManager2.Server.Data.Models.Person", b =>
                 {
                     b.Navigation("Projects");
                 });

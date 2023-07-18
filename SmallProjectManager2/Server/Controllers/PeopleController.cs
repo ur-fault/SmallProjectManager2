@@ -17,6 +17,41 @@ public class PeopleController : ControllerBase
         _db = db;
     }
 
+    #region all workers
+
+    [HttpGet("all")]
+    public async Task<ActionResult<ICollection<PersonDtoGet>>> GetAllWorkers() {
+        var workers = (await _db.ExternalWorkers
+                .Include(worker => worker.Address)
+                .Include(worker => worker.Projects)
+                .ToListAsync())
+            .Select(worker => (PersonDtoGet)worker.ToDtoGet())
+            .ToList();
+        workers.AddRange((await _db.InternalWorkers
+                .Include(worker => worker.Address)
+                .Include(worker => worker.Projects)
+                .ToListAsync())
+            .Select(worker => (PersonDtoGet)worker.ToDtoGet()));
+
+        return Ok(workers);
+    }
+
+    [HttpGet("all/{id:int}")]
+    public async Task<ActionResult<ICollection<PersonDtoGet>>> GetWorker(int id) {
+        var worker = await _db.ExternalWorkers
+                         .Include(worker => worker.Address)
+                         .Include(worker => worker.Projects)
+                         .FirstOrDefaultAsync() as Person
+                     ?? await _db.InternalWorkers.Include(worker => worker.Address)
+                         .Include(worker => worker.Projects)
+                         .FirstOrDefaultAsync();
+
+        if (worker is null) return NotFound();
+        return Ok(worker.ToDtoGet());
+    }
+
+    #endregion
+
     #region external workers
 
     [HttpGet("external")]
@@ -122,7 +157,7 @@ public class PeopleController : ControllerBase
         catch (DbUpdateException e) {
             return BadRequest();
         }
-        
+
         // shouldn't be null, since there was no DbUpdateException
         worker.Address = (await _db.Addresses.FindAsync(worker.AddressID))!;
 

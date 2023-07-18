@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmallProjectManager.Data;
+using SmallProjectManager2.Server.Data.Models;
 using SmallProjectManager2.Shared.Models;
 using SmallProjectManager2.Shared.Models.Dto;
 
@@ -17,15 +18,18 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<ICollection<ProjectDtoGet>> GetAll() {
-        return Ok(_db.Projects);
+    public async Task<ActionResult<ICollection<ProjectDtoGet>>> GetAll() {
+        var dtos = (await _db.Projects.Include(project => project.Person).ToListAsync()).Select(project =>
+                project.ToDtoGet())
+            .ToList();
+        return Ok(dtos);
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ProjectDtoGet>> Get(int id) {
-        var project = await _db.Projects.FindAsync(id);
+        var project = await _db.Projects.Include(project => project.Person).FirstOrDefaultAsync();
         if (project is not null)
-            return Ok(project);
+            return Ok(project.ToDtoGet());
         return NotFound();
     }
 
@@ -45,6 +49,8 @@ public class ProjectsController : ControllerBase
             await _db.SaveChangesAsync();
         }
         catch (DbUpdateException e) {
+            Console.WriteLine(e);
+            Console.WriteLine(e.Source);
             return BadRequest();
         }
 

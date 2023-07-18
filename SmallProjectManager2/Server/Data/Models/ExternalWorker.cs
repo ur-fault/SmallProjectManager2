@@ -16,5 +16,6 @@ public class ExternalWorker : Person
         Address = Address.ToDto(),
         Projects = Projects.Select(p => p.ToDtoGet(true)).ToList(),
         Company = Company,
+        Kind = "external",
     };
 }

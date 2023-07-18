@@ -17,5 +17,6 @@ public class InternalWorker : Person
         Address = Address.ToDto(),
         Projects = Projects.Select(p => p.ToDtoGet(true)).ToList(),
         FirstWorkDay = FirstWorkDay,
+        Kind = "internal",
     };
 }

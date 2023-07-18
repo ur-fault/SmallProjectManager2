@@ -1,14 +1,14 @@
 using System.ComponentModel.DataAnnotations;
-using SmallProjectManager2.Server.Data.Models;
+using SmallProjectManager2.Shared.Models;
 
-namespace SmallProjectManager2.Shared.Models;
+namespace SmallProjectManager2.Server.Data.Models;
 
 public class Project
 {
     public int ID { get; set; }
 
     [Required]
-    [StringLength(2, MinimumLength = 50)]
+    [StringLength(50, MinimumLength = 2)]
     public string Name { get; set; } = default!;
 
     [Range(0, 1)] public float Progress { get; set; }
@@ -24,6 +24,6 @@ public class Project
         Name = Name,
         Progress = Progress,
         PersonID = PersonID,
-        Person = ignorePerson ? null : Person.ToDtoGet(),
+        Person = ignorePerson ? null : Person?.ToDtoGet(),
     };
 }

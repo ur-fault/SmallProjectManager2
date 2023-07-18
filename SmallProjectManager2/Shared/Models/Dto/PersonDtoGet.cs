@@ -14,5 +14,8 @@ public class PersonDtoGet
 
     public ICollection<ProjectDtoGet> Projects { get; set; }
 
-    public override string ToString() => $"{Firstname} {Lastname}, {Address}, {Projects.Count} projects";
+    public string Kind { get; set; }
+
+    public override string ToString() =>
+        $"{Firstname} {Lastname}, {Address?.ToString() ?? "? addr"}, {Projects?.Count.ToString() ?? "?"} projects";
 }
